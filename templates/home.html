@@ -6,7 +6,36 @@
     <title>Home</title>
 </head>
 <body>
-    <p>Selamat datang {{ name }}!</p>
+    <p>Daftar Buku</p>
+    <table border="1" cellspacing="0">
+        {% if perpustakaan %}
+            <tr>
+                <th>Kode</th>
+                <th>Judul</th>
+                <th>Pengarang</th>
+                <th>Aksi</th>
+            </tr>
+        {% endif %}
+        {% for b in perpustakaan %}
+        <tr>
+            <td>{{ b.kode }}</td>
+            <td>{{ b.judul }}</td>
+            <td>{{ b.pengarang }}</td>
+            <td>
+                <a href="/delete/{{ b.kode }}">hapus</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
     
+    <form action="/add" method="post">
+        <label for="kode">Kode: </label>
+        <input type="text" id="kode" name="kode">
+        <label for="judul">Judul: </label>
+        <input type="text" id="judul" name="judul">
+        <label for="pengarang">Pengarang: </label>
+        <input type="text" id="pengarang" name="pengarang">
+        <button type="submit">Tambah!</button>
+    </form>
 </body>
 </html>

@@ -99,8 +99,22 @@ HTTP method menentukan jenis request (permintaan) yang di kirimkan oleh client (
 - POST: Digunakan untuk mengirim data baru ke server.
 - PUT: Digunakan untuk memperbarui data yang sudah ada di server.
 - DELETE: Digunakan untuk menghapus data dari server.
+```py
+@app.route('/add', methods=["GET", "POST"])
+def tambah():
+    if request.method == "POST":
+        judul = request.form.get('judul')
+        author = request.form.get('author')
+        rilis = request.form.get('rilis')
+        koleksi.append({'judul': judul, 'author': author 'rilis': rilis})
+        return redirect('/')
+    else:
+        return redirect('/')
+```
+
 
 ## Referensi:
 https://flask.palletsprojects.com/en/stable/quickstart/
+<br>
 https://www.codepolitan.com/blog/apa-itu-flask-panduan-membangun-api-dengan-flask/
 https://belajarpython.com/tutorial/virtual-environment-python/
