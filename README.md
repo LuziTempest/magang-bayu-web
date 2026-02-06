@@ -16,13 +16,14 @@
 
 ## Apa Itu Virtual Environment?
 
-**Virtual Environment (venv)** Virtual environment adalah lingkungan terisolasi yang dibuat untuk proyek Python tertentu. Di dalamnya, kamu bisa menginstall versi paket Python tanpa mengganggu pengaturan sistem Python atau proyek lainnya.
+**Virtual Environment (venv)** adalah lingkungan isolasi mandiri yang dibuat khusus untuk sebuah proyek Python. Di dalamnya, Anda bisa menginstal pustaka (library) atau paket Python dengan versi tertentu tanpa mengganggu pengaturan Python global atau proyek lainnya pada komputer yang sama.
 
-Misalnya, kamu sedang mengerjakan proyek dengan Flask 1.0.2, tapi di waktu yang sama kamu juga perlu menggunakan Flask 1.1.2 untuk proyek lain. Dengan ini, kamu bisa mengatur kedua proyek ini tanpa bentrok, karena masing-masing proyek punya "lingkungan" paketnya sendiri.
+**Mengapa ini penting?**
+Bayangkan Anda mengerjakan Proyek A yang membutuhkan **Flask 1.0**, tetapi di saat bersamaan Anda juga mengerjakan Proyek B yang mewajibkan **Flask 2.0**. Tanpa venv, kedua versi ini akan bentrok. Dengan venv, setiap proyek memiliki "ruang kerja" sendiri sehingga dependensi antar proyek tidak saling mengganggu.
 
 ## Instalasi dan Setup Virtual Environment
 ### Instalasi venv
-Buka terminal atau command prompt di direktori proyek Anda, lalu jalankan:
+Buka terminal atau Command Prompt (CMD), arahkan ke folder proyek Anda, lalu jalankan perintah berikut:
 ```sh
 # Windows
 python -m venv venv
@@ -32,7 +33,7 @@ python3 -m venv venv
 ```
 
 ### Setup venv
-Setelah dibuat, Anda harus mengaktifkannya:
+Setelah berhasil dibuat, Anda perlu mengaktifkan lingkungan tersebut agar sistem tahu bahwa Anda sedang bekerja di dalamnya:
 ```sh
 # Windows
 venv\Scripts\activate
@@ -41,19 +42,21 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-Jika sudah masuk ke dalam virtual enviropment akan muncul tanda berikut
+Jika berhasil masuk, tampilan terminal Anda akan diawali dengan tanda kurung nama environment, seperti ini:
 ```sh
 (venv) C:\Coding\magang>
 ```
 ## Apa Itu Flask?
 
-**Flask** adalah framework web Python yang simpel, fleksibel, dan ideal untuk membangun API yang ringan dan efisien. Fungsi Flask yaitu memudahkan penggunaan dan komunitas yang aktif. Sehingga Flask di katakan menjadi pilihan yang tepat bagi developer Python yang ingin memulai pengembangan API.
-Untuk menginstal Flask ke dalam lingkungan Python Anda. Ini dapat di lakukan menggunakan pip:
+**Flask** adalah micro-framework web berbasis Python yang ringan, fleksibel, dan sangat ideal untuk membangun aplikasi web maupun API. Flask populer karena penggunaannya yang sederhana (minimalis) namun didukung oleh komunitas yang sangat besar. Ini menjadikannya pilihan tepat bagi developer pemula maupun profesional.
+
+Untuk menginstal Flask di dalam virtual environment, gunakan perintah:
 ```sh
 pip install Flask
 ```
+
 ### Setup Flask
-Pertama kali definisikan aplikasi Flask Anda. Ini dilakukan dengan membuat instance dari class Flask.
+Langkah pertama adalah mendefinisikan aplikasi Flask Anda dengan membuat instance dari kelas Flask.
 ```py
 from flask import Flask
 
@@ -61,35 +64,44 @@ app = Flask(__name__)
 ```
 
 ### Route dan Fungsi
-Route (rute) menentukan URL yang akan di proses oleh aplikasi Flask Anda. Untuk setiap route, Anda perlu mendefinisikan fungsi yang akan menangani permintaan yang masuk.
+Route (rute) berfungsi untuk memetakan URL ke fungsi Python tertentu. Jadi, ketika pengguna mengakses URL tertentu, Flask akan menjalankan fungsi yang sesuai.
 
 #### Return HTML 
+Contoh paling sederhana adalah mengembalikan teks atau HTML langsung ke browser.
 ```py
 @app.route('/')
 def index():
   return "<h1>Selamat Datang di API Saya!</h1>"
 ```
-Di contoh kode tersebut, route "/" akan diproses oleh fungsi index. Fungsi index kemudian mengembalikan string "Selamat Datang di API Saya!" yang akan dikirimkan sebagai response kepada pengguna.
+Penjelasan: Ketika pengguna mengakses halaman utama (/), fungsi index akan dijalankan dan teks "Selamat Datang di API Saya!" akan dikirim kembali ke pengguna.
 
 #### Return File
+Untuk menampilkan halaman web utuh, kita biasanya menggunakan file HTML terpisah.
 ```py
+from flask import render_template
+
 @app.route('/')
 def index():
-  temp = "Hello word"
-  return render_template("home.html", temp=temp)
+    pesan = "Hello World"
+    # Mengirimkan variabel 'pesan' agar bisa dibaca di dalam home.html
+    return render_template("home.html", temp=pesan)
 ```
-Fungsi index diatas akan menampilkan file home.html dan mengirimkan variabel temp.
+Penjelasan: Fungsi ini akan me-render file home.html yang ada di folder templates dan menyisipkan data variabel pesan ke dalamnya.
 
 #### Return Json (response)
+Jika Anda membuat API, data biasanya dikirim dalam format JSON.
 ```py
+from flask import jsonify
+
 @app.route('/data')
 def get_data():
-  data = {
-    'nama': 'Rimuru',
-    'nrp': 5025241043,
-    'jurusan': 'Teknik Informatika'
-  }
-  return jsonify(data), 200
+    data = {
+        'nama': 'Rimuru',
+        'nrp': 5025241043,
+        'jurusan': 'Teknik Informatika'
+    }
+    # Mengembalikan data JSON dengan status code 200 (Sukses)
+    return jsonify(data), 200
 ```
 Fungsi get_data akan mengembalikan data pengguna dalam format JSON dengan status code 200 (OK). Method jsonify digunakan untuk mengonversi data Python menjadi format JSON yang dapat di baca oleh client.
 
@@ -103,12 +115,16 @@ HTTP method menentukan jenis request (permintaan) yang di kirimkan oleh client (
 @app.route('/add', methods=["GET", "POST"])
 def tambah():
     if request.method == "POST":
+        # Menangkap data dari form
         judul = request.form.get('judul')
         author = request.form.get('author')
         rilis = request.form.get('rilis')
-        koleksi.append({'judul': judul, 'author': author 'rilis': rilis})
+        
+        # Menyimpan data ke list sementara
+        koleksi.append({'judul': judul, 'author': author, 'rilis': rilis})
         return redirect('/')
     else:
+        # Jika method GET, kembalikan ke halaman awal (atau tampilkan form)
         return redirect('/')
 ```
 
